@@ -7,7 +7,7 @@ const ejs = require('ejs');
 // global scope to use it in app.get()
 let newTodos = [];
 
-// port            <li><%= todo %></li>
+// port
 const port = 3000;
 
 // creat app

@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/style.css">
     <title>Todo app</title>
 </head>
 <body>
-    <h1><%= today %></h1>
+    <div class="box" id="heading">
+        <h1><%= today %></h1>
+    </div>
 
-    <ul>
+    <div class="box">
         <%for(i=0; i<todos.length; i++){%>
-            <li><%= todos[i] %></li>
-        <%}%>   
-    </ul>
-    
-    <form action="/" method="post">
-        <input type="text" name="input" >
-        <button type="submit" name="button">Add</button>
-    </form>
+            <div class="item">
+                <input type="checkbox" class="styled-checkbox" id="styled-checkbox-1" name="check">
+                <p><%= todos[i] %></p>
+            </div>
+        <%}%>  
+        <form class="item" action="/" method="post">
+            <input  type="text" name="input" placeholder="New item" autocomplete="off" >
+            <button type="submit" name="button">+</button>
+        </form> 
+    </div>
+
 </body>
 </html>

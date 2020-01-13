@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const ejs = require('ejs');
+const date = require(__dirname + "/date.js");
 
 // pass the post value into this variable
 // global scope to use it in app.get()
@@ -21,14 +22,7 @@ app.set('view engine', 'ejs');
 
 // home route
 app.get('/', function(req, res) {
-	// get the current day
-	const options = {
-		weekday: 'long',
-		day: 'numeric',
-		month: 'long'
-	};
-	const date = new Date();
-	const currentDay = date.toLocaleDateString('en-GB', options);
+const currentDay = date();
 
 	res.render('list', {
 		listTitle: currentDay,

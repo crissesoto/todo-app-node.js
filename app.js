@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
+const _ = require('lodash');
+
 
 
 
@@ -75,7 +77,7 @@ app.get('/', function(req, res) {
 			else{
 				res.render('list', {
 					listTitle: 'Today',
-					todos: docs // post request
+					todos: docs 
 				});
 			}
 		});
@@ -83,7 +85,6 @@ app.get('/', function(req, res) {
 
 // get the posted data from the input form and redirct to the right route
 app.post('/', function(req, res) {
-	console.log(req.body);
 
 	const listName = req.body.list;
 	let newTodo = new Item({name: req.body.input});
@@ -104,22 +105,38 @@ app.post('/', function(req, res) {
 
 // get the posted data from the input form and redirct to the right route
 app.post('/delete', function(req, res) {
-		const checkedItemID = req.body.checkbox;
+	
+	// item's id
+	const checkedItemID = req.body.checkbox;
 
+	// item's list
+	const listName = req.body.listName;
+
+	if(listName === "Today"){
 		Item.findOneAndRemove({ _id: checkedItemID }, function(err){
 			if(err){
 				console.log(err)
 			}else{
 				console.log("succesful detelet item")
 			}
-
+	
 			res.redirect("/");
 		})
+	}else{
+		List.findOneAndUpdate({name: listName}, {$pull:{items:{_id: checkedItemID }}}, function(err, foundList){
+			if(!err){
+				res.redirect("/" + listName)
+			}else{
+				console.log(err)
+			}
+
+		});
+	}
 });
 
 // custom routes
 app.get('/:listName', function(req, res) {
-	const customListName = req.params.listName;
+	const customListName = _.capitalize(req.params.listName);
 
 
 
@@ -127,7 +144,6 @@ app.get('/:listName', function(req, res) {
 		if(!err){
 			if(list){
 				// show list if it exist
-				console.log("list exist!", list)
 				res.render('list', {
 					listTitle: list.name,
 					todos: list.items 

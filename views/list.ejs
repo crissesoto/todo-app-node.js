@@ -8,15 +8,18 @@
     </div>
 
     <div class="box">
-        <%for(i=0; i<todos.length; i++){%>
-        <div class="item">
-            <input type="checkbox" class="styled-checkbox" id="styled-checkbox-1" name="check">
-            <p><%= todos[i] %></p>
-        </div>
 
-        <%}%>  
+        <%todos.forEach(todo => {%>
+        <form action="/delete" method="POST">
+            <div class="item">
+                <input type="checkbox" name="checkbox" value="<%= todo._id %>" onchange="this.form.submit()" class="styled-checkbox" id="styled-checkbox-1" name="check">
+                <p><%= todo.name %></p>
+            </div>
+        </form>
+
+        <%})%>  
             <form class="item" action="/" method="post">
-                <input  type="text" name="input" placeholder="New item" autocomplete="off" >
+                <input  type="text" name="input"  placeholder="New item" autocomplete="off" >
                 <button type="submit" name="list" value=<%= listTitle %>>+</button>
         </form>
     </div>

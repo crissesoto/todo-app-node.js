@@ -41,15 +41,20 @@ const Item = mongoose.model("Item", itemSchema);
 const todo1 = new Item({
 	name: "Learn backend",
 });
-const todo2 = new Item({
-	name: "eat",
-});
-const todo3 = new Item({
-	name: "relax",
-});
 
 // create array with the default values in our todo
-const defaultArray = [todo1, todo2, todo3];
+const defaultArray = [todo1];
+
+
+// schema for diffrent todo lists
+const listSchema = new mongoose.Schema({
+	name: String,
+	items: [itemSchema]
+});
+
+// create a List model that uses the listSchema 
+const List = mongoose.model("List", listSchema);
+
 
 
 // home route
@@ -79,18 +84,27 @@ app.get('/', function(req, res) {
 // get the posted data from the input form and redirct to the right route
 app.post('/', function(req, res) {
 	console.log(req.body);
+
+	const listName = req.body.list;
 	let newTodo = new Item({name: req.body.input});
 
-	newTodo.save()
-	
-	res.redirect("/");
+
+	if(listName === "Today"){
+		newTodo.save()
+		res.redirect("/");
+	}else{
+		List.findOne({name: listName}, function(err, foundList){
+			foundList.items.push(newTodo);
+			foundList.save()
+			res.redirect("/" + listName)
+		});
+	}
 });
 
 
 // get the posted data from the input form and redirct to the right route
 app.post('/delete', function(req, res) {
 		const checkedItemID = req.body.checkbox;
-		console.log(checkedItemID);
 
 		Item.findOneAndRemove({ _id: checkedItemID }, function(err){
 			if(err){
@@ -103,14 +117,38 @@ app.post('/delete', function(req, res) {
 		})
 });
 
-// work route
-app.get('/work', function(req, res) {
-	const list = 'Work';
+// custom routes
+app.get('/:listName', function(req, res) {
+	const customListName = req.params.listName;
 
-	res.render('list', {
-		listTitle: list,
-		todos: defaultArray // post request
+
+
+	List.findOne({ name: customListName }, function (err, list) {
+		if(!err){
+			if(list){
+				// show list if it exist
+				console.log("list exist!", list)
+				res.render('list', {
+					listTitle: list.name,
+					todos: list.items 
+				});
+			}else{
+				// crate list if it doesnt exist
+				// creat a list
+				const list = new List({
+					name: customListName,
+					items: defaultArray
+				});
+
+				list.save();
+				res.redirect("/" + customListName)
+			}
+
+		}else{
+			console.log(err);
+		}
 	});
+
 });
 
 // port

@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 
 // include mongoose in our project and open a connection to the particular database
 // db will be auto created
-mongoose.connect('mongodb://localhost:27017/todolistDB', {useNewUrlParser: true , useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://admin-crisse:serimi03@angelaapps-5expc.mongodb.net/todolistDB', {useNewUrlParser: true , useUnifiedTopology: true });
 
 // get notified if we connect successfully or if a connection error occurs:
 const db = mongoose.connection;
